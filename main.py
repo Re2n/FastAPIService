@@ -14,4 +14,5 @@ async def startup():
 async def startup():
     await database.disconnect()
 
-app.include_router(users.router)
+app.include_router(users.user_router)
+app.include_router(users.adminuser_router)
