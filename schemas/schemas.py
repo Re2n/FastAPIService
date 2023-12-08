@@ -5,7 +5,7 @@ metadata = MetaData()
 user = Table(
     "user",
     metadata,
-    Column("username", String, nullable=False),
+    Column("username", String, nullable=False, unique=True),
     Column("password", String, nullable=False),
     Column("is_admin", Boolean, default=False, nullable=False),
     Column("balance", Float, default=0.0, nullable=False),
