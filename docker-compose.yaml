@@ -1,10 +1,12 @@
 version: '3.7'
 services:
-  web:
+  app:
+    image: fastapi-app
     build: .
-    image: fastapitrain
     ports:
-      - "8000:8000"
+      - 8000:8000
+    networks:
+      - backend
   database:
     image: postgres:16
     restart: always
