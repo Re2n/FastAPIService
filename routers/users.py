@@ -1,16 +1,10 @@
-from typing import Annotated
-
 from fastapi import APIRouter, Depends
-from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
-from sqlalchemy import select
 
 from models.models import ModelUser
-from schemas.db import database
-from schemas.schemas import user
-from services.jwt import verify_jwt_token, create_jwt_token
+
 from services.services import User, AdminUser
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl='/account/signin')
+from services.auth import get_current_user
 
 user_router = APIRouter(
     tags=['AccountController']
@@ -21,48 +15,6 @@ user_router = APIRouter(
 async def register(username, password, ):
     new_user = await User.register(username, password)
     return new_user
-
-
-@user_router.post('/account/signin')
-async def authenticate(form_data: Annotated[OAuth2PasswordRequestForm, Depends()]):
-    query = (
-        select(
-            [
-                user.c.username,
-                user.c.is_admin,
-                user.c.balance
-            ]
-        )
-        .where(user.c.username == form_data.username)
-    )
-    cur_user = await database.fetch_one(query)
-    if cur_user is None:
-        return {'status': 400, 'data': 'Incorrect username or password'}
-    query1 = (
-        select(
-            [
-                user.c.password,
-            ]
-        )
-        .where(user.c.username == form_data.username)
-    )
-    cur_password = await database.fetch_one(query1)
-    if form_data.password != cur_password['password']:
-        return {'status': 400, 'data': 'Incorrect username or password'}
-    jwt_token = create_jwt_token(
-        {"sub": cur_user['username'], 'is_admin': cur_user['is_admin'], 'balance': cur_user['balance']})
-    return {'access_token': jwt_token}
-
-
-async def get_current_user(token: str = Depends(oauth2_scheme)):
-    decoded_data = verify_jwt_token(token)
-    username = decoded_data.get('sub')
-    is_admin = decoded_data.get('is_admin')
-    balance = decoded_data.get('balance')
-    if username is None:
-        return {'data': 'Invalid token'}
-    user = {'username': username, 'is_admin': is_admin, 'balance': balance}
-    return user
 
 
 @user_router.get('/account/me')
