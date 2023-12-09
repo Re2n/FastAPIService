@@ -14,11 +14,28 @@ user = Table(
 transport = Table(
     "transport",
     metadata,
-    Column("id", Integer, primary_key=True),
+    Column("ownerusername", String, nullable=False),
+    Column("canBeRented", Boolean, nullable=False),
+    Column("transportType", String, nullable=False),
+    Column("model", String, nullable=False),
+    Column("color", String, nullable=False),
+    Column("identifier", String, nullable=False),
+    Column("description", String),
+    Column("latitude", Float, nullable=False),
+    Column("longitude", Float, nullable=False),
+    Column("minutePrice", Float),
+    Column("dayPrice", Float),
 )
 
 rent = Table(
     "rent",
     metadata,
     Column("id", Integer, primary_key=True),
+    Column("transportidentifier", String, nullable=False),
+    Column("ownerusername", String, nullable=False),
+    Column("timeStart", String, nullable=False),
+    Column("timeEnd", String),
+    Column("priceOfUnit", Float, nullable=False),
+    Column("priceType", String, nullable=False),
+    Column("finalPrice", Float),
 )
