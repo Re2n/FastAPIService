@@ -1,5 +1,10 @@
 version: '3.7'
 services:
+  web:
+    build: .
+    image: fastapitrain
+    ports:
+      - "8000:8000"
   database:
     image: postgres:16
     restart: always
